@@ -1,50 +1,108 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
+import HomeScreen from './HomeScreen';
+import { Research } from './Research';
+import ResearchScreen from './ResearchScreen';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { useEffect, useState } from 'react';
+import NewResearchDialog from './NewResearchDialog';
+import { v4 as uuidv4 } from 'uuid';
+import SettingsDialog from './SettingsDialog';
+import { getApiKey, setApiKey, getResearches, setResearches } from './StoreService';
+import { ReactFlowProvider } from 'reactflow';
 
-function Hello() {
-  return (
-    <div>
-      <div className="Hello">
-        <img width="200" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="folded hands">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
-  );
-}
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 export default function App() {
+  const [researches, setResearchesState] = useState<Research[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [apiKey, setApiKeyState] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadData = async () => {
+      const storedResearches = await getResearches();
+      const storedApiKey = await getApiKey();
+      setResearchesState(storedResearches);
+      setApiKeyState(storedApiKey);
+    };
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    setResearches(researches);
+  }, [researches]);
+
+  useEffect(() => {
+    setApiKey(apiKey);
+  }, [apiKey]);
+
+  const handleStartNewResearch = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleCreateResearch = (name: string) => {
+    const newResearch: Research = {
+      id: uuidv4(),
+      name,
+      path: `/Users/thanhtran/devs/Synaxus/researches/${name.replace(/\s+/g, '-').toLowerCase()}`,
+      createdAt: new Date().toISOString(),
+    };
+    setResearchesState([...researches, newResearch]);
+    setDialogOpen(false);
+    navigate(`/research/${newResearch.id}`);
+  };
+
+  const handleOpenSettings = () => {
+    setSettingsOpen(true);
+  };
+
+  const handleCloseSettings = () => {
+    setSettingsOpen(false);
+  };
+
+  const handleSaveSettings = (newApiKey: string) => {
+    setApiKeyState(newApiKey);
+    setSettingsOpen(false);
+  };
+
   return (
-    <Router>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <NewResearchDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        onCreate={handleCreateResearch}
+      />
+      <SettingsDialog
+        open={settingsOpen}
+        onClose={handleCloseSettings}
+        onSave={handleSaveSettings}
+        initialApiKey={apiKey}
+      />
       <Routes>
-        <Route path="/" element={<Hello />} />
+        <Route
+          path="/"
+          element={
+            <HomeScreen
+              researches={researches}
+              onStartNewResearch={handleStartNewResearch}
+              onOpenSettings={handleOpenSettings}
+            />
+          }
+        />
+        <Route path="/research/:id" element={<ReactFlowProvider><ResearchScreen apiKey={apiKey} researches={researches} /></ReactFlowProvider>} />
       </Routes>
-    </Router>
+    </ThemeProvider>
   );
 }

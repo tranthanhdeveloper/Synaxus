@@ -1,0 +1,13 @@
+.sidebar {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  z-index: 10 !important;
+  padding: 16px !important;
+  background-color: #1e1e1e !important; /* Dark background for the sidebar */
+  border-radius: 8px !important;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3) !important;
+  width: 350px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
