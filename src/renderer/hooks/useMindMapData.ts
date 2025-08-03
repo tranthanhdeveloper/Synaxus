@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { getMindMapData, setMindMapData } from '../StoreService';
+import { getMindMapData, setMindMapData } from '../services/StoreService';
 
 export function useMindMapData() {
   const loadMindMap = useCallback(async (id: string) => {

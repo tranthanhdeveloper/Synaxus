@@ -1,15 +1,14 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
-import HomeScreen from './HomeScreen';
-import { Research } from './Research';
-import ResearchScreen from './ResearchScreen';
+import HomeScreen from './components/Home/HomeScreen';
+import { Research } from './types/Research';
+import ResearchScreen from './components/Research/ResearchScreen';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useEffect, useState } from 'react';
-import NewResearchDialog from './NewResearchDialog';
+import NewResearchDialog from './components/Home/NewResearchDialog';
 import { v4 as uuidv4 } from 'uuid';
-import SettingsDialog from './SettingsDialog';
-import { getApiKey, setApiKey, getResearches, setResearches } from './StoreService';
+import { getApiKey, setApiKey, getResearches, setResearches } from './services/StoreService';
 import { ReactFlowProvider } from 'reactflow';
 
 const darkTheme = createTheme({
@@ -21,7 +20,6 @@ const darkTheme = createTheme({
 export default function App() {
   const [researches, setResearchesState] = useState<Research[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [apiKey, setApiKeyState] = useState('');
   const navigate = useNavigate();
 
@@ -43,16 +41,6 @@ export default function App() {
     setApiKey(apiKey);
   }, [apiKey]);
 
-  useEffect(() => {
-    window.electron.ipcRenderer.on('open-settings-dialog', () => {
-      setSettingsOpen(true);
-    });
-
-    return () => {
-      window.electron.ipcRenderer.removeAllListeners('open-settings-dialog');
-    };
-  }, []);
-
   const handleStartNewResearch = () => {
     setDialogOpen(true);
   };
@@ -62,30 +50,17 @@ export default function App() {
   };
 
   const handleCreateResearch = (name: string) => {
+    let id = uuidv4();
     const newResearch: Research = {
-      id: uuidv4(),
+      id: id,
       name,
-      path: `/Users/thanhtran/devs/Synaxus/researches/${name.replace(/\s+/g, '-').toLowerCase()}`,
+      path: `./researches/${id}`,
       createdAt: new Date().toISOString(),
     };
     setResearchesState([...researches, newResearch]);
     setDialogOpen(false);
     navigate(`/research/${newResearch.id}`);
   };
-
-  const handleOpenSettings = () => {
-    setSettingsOpen(true);
-  };
-
-  const handleCloseSettings = () => {
-    setSettingsOpen(false);
-  };
-
-  const handleSaveSettings = (newApiKey: string) => {
-    setApiKeyState(newApiKey);
-    setSettingsOpen(false);
-  };
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -101,7 +76,6 @@ export default function App() {
             <HomeScreen
               researches={researches}
               onStartNewResearch={handleStartNewResearch}
-              onOpenSettings={handleOpenSettings}
             />
           }
         />

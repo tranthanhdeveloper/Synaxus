@@ -1,5 +1,5 @@
 
-import { ipcMain } from 'electron';
+import { app, ipcMain } from 'electron';
 let Store: any;
 let store: any;
 
@@ -47,6 +47,7 @@ ipcMain.handle('getResearches', () => {
 
 ipcMain.handle('setResearches', (_event, researches: any[]) => {
   (async () => {
+    console.log(app.getAppPath());
     await initStore();
     store.set('researches', researches);
   })();

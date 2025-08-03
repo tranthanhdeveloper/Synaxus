@@ -1,4 +1,4 @@
-import { Research } from './Research';
+import { Research } from '../types/Research';
 
 export async function getMindMapData(researchId: string): Promise<any> {
   return await window.electron.ipcRenderer.invoke('getMindMapData', researchId);

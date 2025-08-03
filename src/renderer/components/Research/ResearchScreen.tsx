@@ -1,15 +1,12 @@
 import { Link, useParams, useNavigate, } from 'react-router-dom';
-import ReactFlow, { MiniMap, Controls, Background, useNodesState, useEdgesState, addEdge, Node, useReactFlow, ReactFlowProvider, useStoreApi } from 'reactflow';
-import ResearchNode from './components/ResearchNode';
-
-const nodeTypes = { researchNode: ResearchNode };
+import {  useNodesState, useEdgesState, addEdge, Node, useReactFlow, Connection, } from 'reactflow';
+import ResearchNode from './Synap/Synap';
 import 'reactflow/dist/style.css';
-import './ResearchScreen.css'; // Import the CSS file
 import { useCallback, useEffect, useState, useLayoutEffect} from 'react';
-import { Research } from './Research';
-import { getGeminiIdeas, generateGeminiContent } from './GeminiService';
-import { Button, CircularProgress } from '@mui/material';
-import { getMindMapData, setMindMapData } from './StoreService';
+import { Research } from '../../types/Research';
+import { getGeminiIdeas, generateGeminiContent } from '../../services/GeminiService';
+import { getMindMapData, setMindMapData } from '../../services/StoreService';
+import MindMapCanvas from './MindMapCanvas';
 
 interface Props {
   apiKey: string;
@@ -37,6 +34,7 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
 
     const loadMindMap = async () => {
       const storedData = await getMindMapData(id!);
+      console.log('Loaded mind map data:', storedData);
       if (storedData) {
         setNodes(storedData.nodes);
         setEdges(storedData.edges);
@@ -68,7 +66,7 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
   }, [nodes, edges, research, getViewport]);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
   );
 
@@ -125,39 +123,14 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <ReactFlow
-        nodes={nodes.map(node => ({
-          ...node,
-          data: {
-            ...node.data,
-            onMarkdownChange: onMarkdownChange,
-            onQuerySubmit: onQuerySubmit,
-            queryText: queryText,
-            setQueryText: setQueryText,
-            loading: loading,
-            apiKey: apiKey,
-          }
-        }))}
+      <MindMapCanvas
+        nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick}
-        nodeTypes={nodeTypes}
-      >
-        <Controls />
-        <MiniMap />
-        <Background />
-        <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
-          <Link to="/">
-            <Button variant="contained" sx={{ mr: 1 }}>Back to Home</Button>
-          </Link>
-          <Button variant="contained" onClick={onAddNode} disabled={loading || !apiKey} sx={{ mr: 1 }}>
-            {loading ? <CircularProgress size={24} /> : 'Generate Ideas'}
-          </Button>
-        </div>
-        
-      </ReactFlow>
+      />
     </div>
   );
 }

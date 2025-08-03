@@ -1,15 +1,13 @@
 import { Link } from 'react-router-dom';
-import { Research } from './Research';
-import { Button, Container, Typography, List, ListItem, ListItemText, Card, CardContent, CardActions, IconButton } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { Research } from '../../types/Research';
+import { Button, Container, Typography, List, ListItem, ListItemText, Card, CardContent, CardActions } from '@mui/material';
 
 interface Props {
   researches: Research[];
   onStartNewResearch: () => void;
-  onOpenSettings: () => void;
 }
 
-export default function HomeScreen({ researches, onStartNewResearch, onOpenSettings }: Props) {
+export default function HomeScreen({ researches, onStartNewResearch }: Props) {
   const safeResearches = Array.isArray(researches) ? researches : [];
   return (
     <Container maxWidth="md">
