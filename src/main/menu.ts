@@ -76,6 +76,13 @@ export default class MenuBuilder {
         { label: 'Show All', selector: 'unhideAllApplications:' },
         { type: 'separator' },
         {
+          label: 'Settings',
+          accelerator: 'Command+,',
+          click: () => {
+            this.mainWindow.webContents.send('open-settings-dialog');
+          },
+        },
+        {
           label: 'Quit',
           accelerator: 'Command+Q',
           click: () => {
@@ -200,6 +207,13 @@ export default class MenuBuilder {
           {
             label: '&Open',
             accelerator: 'Ctrl+O',
+          },
+          {
+            label: 'Settings',
+            accelerator: 'Ctrl+,',
+            click: () => {
+              this.mainWindow.webContents.send('open-settings-dialog');
+            },
           },
           {
             label: '&Close',

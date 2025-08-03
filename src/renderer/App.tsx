@@ -29,7 +29,7 @@ export default function App() {
     const loadData = async () => {
       const storedResearches = await getResearches();
       const storedApiKey = await getApiKey();
-      setResearchesState(storedResearches);
+      setResearchesState(storedResearches || []);
       setApiKeyState(storedApiKey);
     };
     loadData();
@@ -42,6 +42,16 @@ export default function App() {
   useEffect(() => {
     setApiKey(apiKey);
   }, [apiKey]);
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('open-settings-dialog', () => {
+      setSettingsOpen(true);
+    });
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('open-settings-dialog');
+    };
+  }, []);
 
   const handleStartNewResearch = () => {
     setDialogOpen(true);
@@ -83,12 +93,6 @@ export default function App() {
         open={dialogOpen}
         onClose={handleCloseDialog}
         onCreate={handleCreateResearch}
-      />
-      <SettingsDialog
-        open={settingsOpen}
-        onClose={handleCloseSettings}
-        onSave={handleSaveSettings}
-        initialApiKey={apiKey}
       />
       <Routes>
         <Route

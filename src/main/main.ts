@@ -92,6 +92,8 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
+      mainWindow.maximize();
+      mainWindow.focus();
     }
   });
 
@@ -101,6 +103,10 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+
+  ipcMain.on('open-settings-dialog', () => {
+    mainWindow?.webContents.send('open-settings-dialog');
+  });
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {

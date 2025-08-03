@@ -1,12 +1,14 @@
 import { Link, useParams, useNavigate, } from 'react-router-dom';
-import ReactFlow, { MiniMap, Controls, Background, useNodesState, useEdgesState, addEdge, Node, useReactFlow, ReactFlowProvider } from 'reactflow';
+import ReactFlow, { MiniMap, Controls, Background, useNodesState, useEdgesState, addEdge, Node, useReactFlow, ReactFlowProvider, useStoreApi } from 'reactflow';
+import ResearchNode from './components/ResearchNode';
+
+const nodeTypes = { researchNode: ResearchNode };
 import 'reactflow/dist/style.css';
 import './ResearchScreen.css'; // Import the CSS file
 import { useCallback, useEffect, useState, useLayoutEffect} from 'react';
 import { Research } from './Research';
 import { getGeminiIdeas, generateGeminiContent } from './GeminiService';
-import MDEditor from '@uiw/react-md-editor';
-import { Button, TextField, CircularProgress, Box } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import { getMindMapData, setMindMapData } from './StoreService';
 
 interface Props {
@@ -20,7 +22,7 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [queryText, setQueryText] = useState('');
   const { setViewport, getViewport, fitView } = useReactFlow(); // Destructure fitView
   const navigate = useNavigate();
@@ -41,12 +43,12 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
         setViewport(storedData.viewport);
         // Attempt to select the first node if available, or the root node if it exists
         if (storedData.nodes.length > 0) {
-          setSelectedNode(storedData.nodes[0]);
+          setSelectedNodeId(storedData.nodes[0].id);
         }
       } else {
-        const initialNode = { id: '1', position: { x: 250, y: 250 }, data: { label: currentResearch.name, markdownContent: `# ${currentResearch.name}` } };
+        const initialNode = { id: '1', type: 'researchNode', position: { x: 250, y: 250 }, data: { label: currentResearch.name, markdownContent: `# ${currentResearch.name}` } };
         setNodes([initialNode]);
-        setSelectedNode(initialNode); // Select the root node by default
+        setSelectedNodeId(initialNode.id); // Select the root node by default
       }
     };
     loadMindMap();
@@ -71,21 +73,18 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
   );
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
-    setSelectedNode(node);
+    setSelectedNodeId(node.id);
   }, []);
 
   const onMarkdownChange = useCallback((value?: string) => {
-    if (selectedNode) {
-      setNodes((nds) =>
-        nds.map((node) =>
-          node.id === selectedNode.id
-            ? { ...node, data: { ...node.data, markdownContent: value } }
-            : node,
-        ),
-      );
-      setSelectedNode((prev) => prev ? { ...prev, data: { ...prev.data, markdownContent: value } } : null);
-    }
-  }, [selectedNode, setNodes]);
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === selectedNodeId
+          ? { ...node, data: { ...node.data, markdownContent: value } }
+          : node,
+      ),
+    );
+  }, [selectedNodeId, setNodes]);
 
   const onAddNode = useCallback(async () => {
     if (!research) return;
@@ -96,6 +95,7 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
 
     const newNodes = ideas.map((idea, index) => ({
       id: (nodes.length + index + 1).toString(),
+      type: 'researchNode',
       data: { label: idea.title, markdownContent: idea.explanation },
       position: {
         x: Math.random() * 500 - 250,
@@ -107,17 +107,17 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
   }, [research, nodes, setNodes, apiKey]);
 
   const onQuerySubmit = useCallback(async () => {
-    if (!queryText || !apiKey || !selectedNode) return;
+    if (!queryText || !apiKey || !selectedNodeId) return;
 
     setLoading(true);
     const response = await generateGeminiContent(queryText, apiKey);
     setLoading(false);
 
     const newContent = `\n\n## AI Response\n\n${response}`;
-    onMarkdownChange((selectedNode.data.markdownContent || '') + newContent);
+    onMarkdownChange((nodes.find(node => node.id === selectedNodeId)?.data.markdownContent || '') + newContent);
 
     setQueryText('');
-  }, [queryText, apiKey, selectedNode, onMarkdownChange]);
+  }, [queryText, apiKey, selectedNodeId, onMarkdownChange, nodes]);
 
   if (!research) {
     return <div>Loading...</div>;
@@ -126,46 +126,37 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <ReactFlow
-        nodes={nodes}
+        nodes={nodes.map(node => ({
+          ...node,
+          data: {
+            ...node.data,
+            onMarkdownChange: onMarkdownChange,
+            onQuerySubmit: onQuerySubmit,
+            queryText: queryText,
+            setQueryText: setQueryText,
+            loading: loading,
+            apiKey: apiKey,
+          }
+        }))}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick}
+        nodeTypes={nodeTypes}
       >
         <Controls />
         <MiniMap />
         <Background />
-        <Box className="sidebar">
+        <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
           <Link to="/">
             <Button variant="contained" sx={{ mr: 1 }}>Back to Home</Button>
           </Link>
           <Button variant="contained" onClick={onAddNode} disabled={loading || !apiKey} sx={{ mr: 1 }}>
             {loading ? <CircularProgress size={24} /> : 'Generate Ideas'}
           </Button>
-          {selectedNode && (
-            <>
-              <div data-color-mode="dark" style={{ marginTop: '16px', marginBottom: '16px' }}>
-                <MDEditor
-                  value={selectedNode.data.markdownContent || ''}
-                  onChange={onMarkdownChange}
-                  height={200}
-                />
-              </div>
-              <TextField
-                label="Query Gemini AI"
-                variant="outlined"
-                fullWidth
-                value={queryText}
-                onChange={(e) => setQueryText(e.target.value)}
-                sx={{ mb: 1 }}
-              />
-              <Button variant="contained" onClick={onQuerySubmit} disabled={loading || !apiKey || !queryText || !selectedNode}>
-                {loading ? <CircularProgress size={24} /> : 'Submit Query'}
-              </Button>
-            </>
-          )}
-        </Box>
+        </div>
+        
       </ReactFlow>
     </div>
   );

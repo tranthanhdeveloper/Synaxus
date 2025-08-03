@@ -17,9 +17,6 @@ export default function HomeScreen({ researches, onStartNewResearch, onOpenSetti
         <Typography variant="h2" component="h1" gutterBottom>
           Synaxus
         </Typography>
-        <IconButton onClick={onOpenSettings}>
-          <SettingsIcon />
-        </IconButton>
       </div>
       <Button variant="contained" color="primary" onClick={onStartNewResearch} sx={{ mb: 4 }}>
         Start New Research
