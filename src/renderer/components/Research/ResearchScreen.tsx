@@ -1,37 +1,42 @@
 import { Link, useParams, useNavigate, } from 'react-router-dom';
-import {  useNodesState, useEdgesState, addEdge, Node, useReactFlow, Connection, } from 'reactflow';
-import ResearchNode from './Synap/Synap';
+import { useNodesState, useEdgesState, addEdge, Node, useReactFlow, Connection, } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { useCallback, useEffect, useState, useLayoutEffect} from 'react';
+import { useCallback, useEffect, useState, useLayoutEffect } from 'react';
 import { Research } from '../../types/Research';
 import { getGeminiIdeas, generateGeminiContent } from '../../services/GeminiService';
-import { getMindMapData, setMindMapData } from '../../services/StoreService';
+import { getMindMapData, setMindMapData, getResearchById } from '../../services/StoreService';
 import MindMapCanvas from './MindMapCanvas';
+import { Box, LinearProgress } from '@mui/material';
 
 interface Props {
   apiKey: string;
-  researches: Research[];
 }
 
-export default function ResearchScreen({ apiKey, researches }: Props) {
+export default function ResearchScreen({ apiKey }: Props) {
   const { id } = useParams();
   const [research, setResearch] = useState<Research | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [queryText, setQueryText] = useState('');
   const { setViewport, getViewport, fitView } = useReactFlow(); // Destructure fitView
   const navigate = useNavigate();
 
   useEffect(() => {
-    const currentResearch = researches.find((r) => r.id === id);
-    if (!currentResearch) {
-      navigate('/'); // Navigate back to home if research not found
-      return;
-    }
-    setResearch(currentResearch);
+    const loadResearch = async () => {
+      const storedResearch = await getResearchById(id!);
+      if (storedResearch) {
+        setResearch(storedResearch);
+      } else {
+        setResearch(null);
+      }
+      setLoading(false);
+    };
+    loadResearch();
+  }, [id]);
 
+  useEffect(() => {
     const loadMindMap = async () => {
       const storedData = await getMindMapData(id!);
       console.log('Loaded mind map data:', storedData);
@@ -44,13 +49,13 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
           setSelectedNodeId(storedData.nodes[0].id);
         }
       } else {
-        const initialNode = { id: '1', type: 'researchNode', position: { x: 250, y: 250 }, data: { label: currentResearch.name, markdownContent: `# ${currentResearch.name}` } };
+        const initialNode = { id: '1', type: 'researchNode', position: { x: 250, y: 250 }, data: { label: research?.name, markdownContent: `# ${research?.name}` } };
         setNodes([initialNode]);
         setSelectedNodeId(initialNode.id); // Select the root node by default
       }
     };
     loadMindMap();
-  }, [id, setNodes, setEdges, setViewport, researches, navigate]);
+  }, [id, setNodes, setEdges, setViewport, navigate]);
 
   useLayoutEffect(() => {
     if (nodes.length > 0) {
@@ -122,15 +127,20 @@ export default function ResearchScreen({ apiKey, researches }: Props) {
   }
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <MindMapCanvas
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodeClick={onNodeClick}
-      />
-    </div>
+    <>
+      {loading && <Box sx={{ width: '100%' }}>
+        <LinearProgress />
+      </Box>}
+      <div style={{ width: '100vw', height: '100vh' }}>
+        <MindMapCanvas
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onNodeClick={onNodeClick}
+        />
+      </div>
+    </>
   );
 }

@@ -20,6 +20,12 @@ export async function getResearches(): Promise<Research[]> {
   return await window.electron.ipcRenderer.invoke('getResearches');
 }
 
+export async function getResearchById(id: string): Promise<Research> {
+  let researches = await window.electron.ipcRenderer.invoke('getResearches');
+  researches = researches.filter((research: Research) => research.id === id);
+  return researches[0];
+}
+
 export async function setResearches(researches: Research[]): Promise<void> {
   await window.electron.ipcRenderer.invoke('setResearches', researches);
 }

@@ -9,7 +9,9 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import './store-ipc';
+import './store/research-store-ipc';
+import './store/mindmap-store-ipc';
+import './store/user-setting';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';

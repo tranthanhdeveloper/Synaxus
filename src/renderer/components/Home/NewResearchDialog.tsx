@@ -1,17 +1,48 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Research } from '../../types/Research';
+import { v4 as uuidv4 } from 'uuid';
+import { getResearches, setResearches } from '../../services/StoreService';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  onCreate: (name: string) => void;
 }
 
-export default function NewResearchDialog({ open, onClose, onCreate }: Props) {
+export default function NewResearchDialog({ open, onClose }: Props) {
+
+  const [researches, setResearchesState] = useState<Research[]>([]);
   const [name, setName] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadData = async () => {
+      const storedResearches = await getResearches();
+      setResearchesState(storedResearches || []);
+    };
+    loadData();
+  }, []);
+
+
+  useEffect(() => {
+    setResearches(researches);
+  }, [researches]);
+
+  const handleCreateResearch = (name: string) => {
+    let id = uuidv4();
+    const newResearch: Research = {
+      id: id,
+      name,
+      path: `./researches/${id}`,
+      createdAt: new Date().toISOString(),
+    };
+    setResearchesState([...researches, newResearch]);
+    navigate(`/research/${newResearch.id}`);
+  };
 
   const handleCreate = () => {
-    onCreate(name);
+    handleCreateResearch(name);
     setName('');
   };
 
