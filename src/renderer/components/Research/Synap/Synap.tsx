@@ -1,49 +1,26 @@
-import { Handle, Position } from 'reactflow';
-import MDEditor from '@uiw/react-md-editor';
-import { Button, TextField, CircularProgress, Box } from '@mui/material';
-import { NodeProps } from 'reactflow';
+import React from 'react';
 
-interface ResearchNodeData {
-  label: string;
-  markdownContent: string;
-  onMarkdownChange: (value?: string) => void;
-  onQuerySubmit: () => void;
-  queryText: string;
-  setQueryText: (text: string) => void;
-  loading: boolean;
-  apiKey: string;
+interface SynapProps {
+  title: string;
+  color?: string;
+  children?: React.ReactNode;
 }
 
-export default function ResearchNode({ data }: NodeProps<ResearchNodeData>) {
+export default function Synap({ title, color = '#4F8A8B', children }: SynapProps) {
   return (
-    <div className="react-flow__node-default custom-node">
-      <Handle type="target" position={Position.Top} />
-      <Box sx={{ p: 2, border: '1px solid #555', borderRadius: '5px', minWidth: '300px', maxWidth: '500px' }}>
-        <h4>{data.label}</h4>
-        <div data-color-mode="dark" style={{ marginTop: '8px', marginBottom: '8px' }}>
-          <MDEditor
-            value={data.markdownContent || ''}
-            onChange={data.onMarkdownChange}
-            height={200}
-          />
-        </div>
-        <TextField
-          label="Query Gemini AI"
-          variant="outlined"
-          fullWidth
-          value={data.queryText}
-          onChange={(e) => data.setQueryText(e.target.value)}
-          sx={{ mb: 1 }}
-        />
-        <Button
-          variant="contained"
-          onClick={data.onQuerySubmit}
-          disabled={data.loading || !data.apiKey || !data.queryText}
-        >
-          {data.loading ? <CircularProgress size={24} /> : 'Submit Query'}
-        </Button>
-      </Box>
-      <Handle type="source" position={Position.Bottom} />
+    <div
+      style={{
+        borderRadius: 8,
+        padding: '16px',
+        background: color,
+        color: '#fff',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        minWidth: 180,
+        maxWidth: 320,
+      }}
+    >
+      <div style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 8 }}>{title}</div>
+      <div>{children}</div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button, Container, Typography, List, ListItem, ListItemText, Card, CardContent, CardActions } from '@mui/material';
-import NewResearchDialog from './NewResearchDialog';
+import NewResearchDialog from '../NewResearch/NewResearchDialog';
 import { useState } from 'react';
 import ResearchList from '../ResearchList/ResearchList';
 

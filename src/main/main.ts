@@ -12,6 +12,7 @@ import path from 'path';
 import './store/research-store-ipc';
 import './store/mindmap-store-ipc';
 import './store/user-setting';
+import './gemini-ipc';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';

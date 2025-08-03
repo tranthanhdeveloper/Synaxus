@@ -2,17 +2,13 @@ import { Link, useParams, useNavigate, } from 'react-router-dom';
 import { useNodesState, useEdgesState, addEdge, Node, useReactFlow, Connection, } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useCallback, useEffect, useState, useLayoutEffect } from 'react';
-import { Research } from '../../types/Research';
+import { Research } from '../../types/types';
 import { getGeminiIdeas, generateGeminiContent } from '../../services/GeminiService';
 import { getMindMapData, setMindMapData, getResearchById } from '../../services/StoreService';
 import MindMapCanvas from './MindMapCanvas';
 import { Box, LinearProgress } from '@mui/material';
 
-interface Props {
-  apiKey: string;
-}
-
-export default function ResearchScreen({ apiKey }: Props) {
+export default function ResearchScreen() {
   const { id } = useParams();
   const [research, setResearch] = useState<Research | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -66,7 +62,9 @@ export default function ResearchScreen({ apiKey }: Props) {
   useEffect(() => {
     if (research) {
       const viewport = getViewport();
-      setMindMapData(research.id, { nodes, edges, viewport });
+      if(nodes.length > 0) {
+        setMindMapData(research.id, { nodes, edges, viewport });
+      }
     }
   }, [nodes, edges, research, getViewport]);
 
@@ -93,7 +91,7 @@ export default function ResearchScreen({ apiKey }: Props) {
     if (!research) return;
 
     setLoading(true);
-    const ideas = await getGeminiIdeas(research.name, apiKey);
+    const ideas = await getGeminiIdeas(research.name);
     setLoading(false);
 
     const newNodes = ideas.map((idea, index) => ({
@@ -107,20 +105,20 @@ export default function ResearchScreen({ apiKey }: Props) {
     }));
 
     setNodes((nds) => nds.concat(newNodes));
-  }, [research, nodes, setNodes, apiKey]);
+  }, [research, nodes, setNodes]);
 
   const onQuerySubmit = useCallback(async () => {
-    if (!queryText || !apiKey || !selectedNodeId) return;
+    if (!queryText || !selectedNodeId) return;
 
     setLoading(true);
-    const response = await generateGeminiContent(queryText, apiKey);
+    const response = await generateGeminiContent(queryText);
     setLoading(false);
 
     const newContent = `\n\n## AI Response\n\n${response}`;
     onMarkdownChange((nodes.find(node => node.id === selectedNodeId)?.data.markdownContent || '') + newContent);
 
     setQueryText('');
-  }, [queryText, apiKey, selectedNodeId, onMarkdownChange, nodes]);
+  }, [queryText, selectedNodeId, onMarkdownChange, nodes]);
 
   if (!research) {
     return <div>Loading...</div>;
@@ -139,6 +137,7 @@ export default function ResearchScreen({ apiKey }: Props) {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={onNodeClick}
+          onAddNewNode={onAddNode}
         />
       </div>
     </>

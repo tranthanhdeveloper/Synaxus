@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getApiKey, setApiKey, getResearches, setResearches } from '../services/StoreService';
-import { Research } from '../types/Research';
+import { Research } from '../types/types';
 
 interface AppContextType {
   researches: Research[];

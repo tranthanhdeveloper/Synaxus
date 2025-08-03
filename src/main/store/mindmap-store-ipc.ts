@@ -14,13 +14,14 @@ async function initMindMapStore() {
 ipcMain.handle('getMindMapData', (_event, researchId: string) => {
   return (async () => {
     await initMindMapStore();
+    console.log('Fetching mind map data for research ID:', researchId);
     return mindMapStore.get(researchId, null);
   })();
 });
 
-ipcMain.handle('setMindMapData', (_event, researchId: string, data: any) => {
-  (async () => {
-    await initMindMapStore();
-    mindMapStore.set(researchId, data);
-  })();
+ipcMain.handle('setMindMapData', async (_event, researchId: string, data: any) => {
+  await initMindMapStore();
+  console.log('Setting mind map data for research ID:', researchId, 'Data:', data);
+  mindMapStore.set(researchId, data);
 });
+

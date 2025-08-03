@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Research } from '../../types/Research';
+import { Research } from '../../types/types';
 import { v4 as uuidv4 } from 'uuid';
 import { getResearches, setResearches } from '../../services/StoreService';
 
@@ -29,7 +29,7 @@ export default function NewResearchDialog({ open, onClose }: Props) {
     setResearches(researches);
   }, [researches]);
 
-  const handleCreateResearch = (name: string) => {
+  const handleCreateResearch = async (name: string) => {
     let id = uuidv4();
     const newResearch: Research = {
       id: id,

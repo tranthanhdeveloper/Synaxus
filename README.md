@@ -28,3 +28,14 @@ Unlike cloud-based tools, Synaxus runs entirely on your machine. Your data, your
 ### 🚀 Project Status
 
 Synaxus is currently under active development. We welcome contributors who are passionate about building the future of personal knowledge management.
+
+
+
+### Feature backlog
+* **Allow to add node that have not link to any node.**
+* **Show node toolbar.** 
+* **Tag node by color**
+* **Append user's setting when asking AI** to improve the accurate of answer.
+* **Allow user to choose AI model**
+* **Add node on Edge Drop**
+* **Allow user to drag-and-highlight text in markdown editor** to add new node or request AI to explain more

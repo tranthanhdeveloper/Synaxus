@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Research } from '../../types/Research';
+import { Research } from '../../types/types';
 import { Button, Typography, List, ListItem, ListItemText, Card, CardContent, CardActions, Container } from '@mui/material';
 import { getResearches } from '../../services/StoreService';
 import { use, useEffect, useState } from 'react';

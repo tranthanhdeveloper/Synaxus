@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Props {
   open: boolean;
@@ -11,7 +11,15 @@ interface Props {
 export default function SettingsDialog({ open, onClose, onSave, initialApiKey }: Props) {
   const [apiKey, setApiKey] = useState(initialApiKey);
 
-  const handleSave = () => {
+  useEffect(() => {
+    setApiKey(initialApiKey);
+  }, [initialApiKey, open]);
+
+  const handleSave = async () => {
+    // Save API key to main process via IPC
+    if (window.electron?.ipcRenderer?.invoke) {
+      await window.electron.ipcRenderer.invoke('setApiKey', apiKey);
+    }
     onSave(apiKey);
   };
 
