@@ -1,5 +1,5 @@
-import React, { use, useCallback } from 'react';
-import ReactFlow, { MiniMap, Controls, Background, ControlButton, BackgroundVariant, Panel } from 'reactflow';
+import React, { useCallback } from 'react';
+import {ReactFlow, MiniMap, Controls, Background, BackgroundVariant, Panel } from '@xyflow/react';
 import HomeIcon from '@mui/icons-material/Home';
 import { Button } from '@mui/material';
 
@@ -8,10 +8,10 @@ interface MindMapCanvasProps {
   edges: any[];
   onNodesChange: any;
   onEdgesChange: any;
-  onConnect: any;
-  onNodeClick: any;
+  onConnect?: any;
+  onNodeClick?: any;
   children?: React.ReactNode;
-  onAddNewNode: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onAddNewNode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export default function MindMapCanvas({ nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, children, onAddNewNode }: MindMapCanvasProps) {

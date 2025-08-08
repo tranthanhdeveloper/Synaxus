@@ -1,11 +1,11 @@
 import { Research } from '../types/types';
 
-export async function getMindMapData(researchId: string): Promise<any> {
-  return await window.electron.ipcRenderer.invoke('getMindMapData', researchId);
+export async function getResearchMapData(researchId: string): Promise<any> {
+  return await window.electron.ipcRenderer.invoke('getResearchMapData', researchId);
 }
 
-export async function setMindMapData(researchId: string, data: any): Promise<void> {
-  await window.electron.ipcRenderer.invoke('setMindMapData', researchId, data);
+export async function setResearchMapData(researchId: string, data: any): Promise<void> {
+  await window.electron.ipcRenderer.invoke('setResearchMapData', researchId, data);
 }
 
 export async function getApiKey(): Promise<string> {

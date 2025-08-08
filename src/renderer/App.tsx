@@ -1,12 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import HomeScreen from './components/Home/HomeScreen';
-import ResearchScreen from './components/Research/ResearchScreen';
+import ResearchScreen from './components/Research/ResearchWorkspace';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { ReactFlowProvider } from 'reactflow';
-import { useEffect } from 'react';
-import SettingsDialog from './components/Setting/SettingsDialog';
+import { ReactFlowProvider } from '@xyflow/react'
 
 const darkTheme = createTheme({
   palette: {
@@ -20,7 +18,7 @@ export default function App() {
       <CssBaseline />
       <Routes>
         <Route path="/" element={ <HomeScreen /> }  />
-        <Route path="/research/:id" element={<ReactFlowProvider><ResearchScreen /></ReactFlowProvider>} />
+        <Route path="/research/:researchId" element={<ReactFlowProvider><ResearchScreen /></ReactFlowProvider>} />
       </Routes>
     </ThemeProvider>
   );

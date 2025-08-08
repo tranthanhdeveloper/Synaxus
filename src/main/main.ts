@@ -13,6 +13,7 @@ import './store/research-store-ipc';
 import './store/mindmap-store-ipc';
 import './store/user-setting';
 import './gemini-ipc';
+import './files/research-store-ipc'
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
