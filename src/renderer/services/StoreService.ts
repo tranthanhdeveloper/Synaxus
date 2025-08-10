@@ -1,4 +1,4 @@
-import { Research, ResearchData } from '../types/types';
+import { Research, ResearchData, SynapNode } from '../types/types';
 
 export async function getResearchMapData(researchId: string): Promise<ResearchData> {
   return await window.electron.ipcRenderer.invoke('getMindMapData', researchId);
@@ -6,6 +6,10 @@ export async function getResearchMapData(researchId: string): Promise<ResearchDa
 
 export async function setResearchMapData(researchPath: string, data: ResearchData): Promise<void> {
   await window.electron.ipcRenderer.invoke('setMindMapData', researchPath, data);
+}
+
+export async function setResearchNodes(researchPath: string, nodes: SynapNode[]): Promise<void> {
+  await window.electron.ipcRenderer.invoke('setResearchNodes', researchPath, nodes);
 }
 
 export async function createResearchFolder(name: string): Promise<string> {

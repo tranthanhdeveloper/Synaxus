@@ -10,10 +10,6 @@ ipcMain.handle('getMindMapData', async (_event, researchPath: string) => {
 
 ipcMain.handle('setMindMapData', async (_event, researchPath: string, data: ResearchData) => {
   const storingPath = path.join(researchPath, 'researchdata.json');
-  fs.writeFile(storingPath, JSON.stringify(data), { flag: 'wx' }, (err) => {
-    if (err) {
-      console.error('Error saving mind map data:', err);
-    }
-  });
+  fs.writeFileSync(storingPath, JSON.stringify(data), 'utf-8');
 });
 

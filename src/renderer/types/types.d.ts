@@ -40,6 +40,7 @@ export type SynapNodeData ={
 export type SynapNode = Node<SynapNodeData, 'synapNode'>;
 
 export type AppState = {
+  selectedNode: SynapNode | null;
   nodes: SynapNode[];
   edges: Edge[];
   onNodesChange: OnNodesChange<SynapNode>;

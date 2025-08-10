@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
-import { ReactFlow, MiniMap, Controls, Background, BackgroundVariant, Panel } from '@xyflow/react';
+import { ReactFlow, MiniMap, Controls, Background, BackgroundVariant, Panel, ConnectionMode } from '@xyflow/react';
 import HomeIcon from '@mui/icons-material/Home';
-import { Button, Popover } from '@mui/material';
+import { Button } from '@mui/material';
 import Synap from './Synap/Synap';
 import AddNewSynap from './AddNewSynap/AddNewSynap';
+import ResizableSidebar from './Panel/SynapInfo';
 
 interface MindMapCanvasProps {
   nodes: any[];
@@ -34,6 +35,8 @@ export default function MindMapCanvas({ nodes, edges, onNodesChange, onEdgesChan
       onNodeClick={onNodeClick}
       zoomOnScroll={true}
       fitView={true}
+      connectionMode={ConnectionMode.Loose}
+      colorMode='dark'
     >
       <Panel position='top-left'  >
         <Button variant='contained' color='primary' aria-label='Home' onClick={onHomePageClick}>
