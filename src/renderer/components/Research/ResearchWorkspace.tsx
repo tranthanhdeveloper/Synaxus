@@ -4,9 +4,10 @@ import MindMapCanvas from './MindMapCanvas';
 import { Box, LinearProgress } from '@mui/material';
 import useStore from 'renderer/store/store';
 import { useShallow } from 'zustand/react/shallow';
-import { useEffect, useState } from 'react';
-import { getResearchById, getResearchMapData} from 'renderer/services/StoreService';
+import { useCallback, useEffect, useState } from 'react';
+import { getResearchById, getResearchMapData } from 'renderer/services/StoreService';
 import useAppStore from 'renderer/store/store';
+import { useSynapCreation } from 'renderer/hooks/useSynapCreation/useSynapCreation';
 
 const selector = (state: any) => ({
   nodes: state.nodes,
@@ -19,8 +20,8 @@ const selector = (state: any) => ({
 });
 
 export default function ResearchScreen() {
-
   const { researchId } = useParams() as { researchId: string };
+  const { createSynapNode } = useSynapCreation(); // Initialize synap creation hook;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = useAppStore(
@@ -29,15 +30,14 @@ export default function ResearchScreen() {
   useEffect(() => {
     async function loadResearch() {
       const data = await getResearchById(researchId);
-      const mapData = await getResearchMapData(researchId);
-      if (data) {
-        useAppStore.getState().setNodes(nodes);
-        useAppStore.getState().setEdges(edges);
-      }
+      const mapData = await getResearchMapData(data.path)
+      setNodes(mapData.research.nodes);
+      setEdges(mapData.research.edges);
     }
     loadResearch();
     setLoading(false);
   }, [researchId]);
+
 
   return (
     <>
@@ -51,6 +51,7 @@ export default function ResearchScreen() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onAddNewNode={createSynapNode}
         />
       </div>
     </>

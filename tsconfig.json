@@ -21,7 +21,6 @@
     "baseUrl": "src",
     "paths": {
       "@components/*": ["src/renderer/components/*"],
-      "@types/*": ["renderer/types/*"],
       "@hooks/*": ["src/renderer/hooks/*"],
       "@services/*": ["src/renderer/services/*"],
       "@context/*": ["src/renderer/context/*"]

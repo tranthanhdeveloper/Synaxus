@@ -1,4 +1,4 @@
-import { NodeToolbar, NodeToolbarProps } from "reactflow";
+import { NodeToolbar, NodeToolbarProps } from "@xyflow/react";
 
 export default function SynapToolbar({isVisible, position}: NodeToolbarProps) {
   return (

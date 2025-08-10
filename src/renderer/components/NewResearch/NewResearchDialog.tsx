@@ -1,9 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Research } from '../../types/types';
-import { v4 as uuidv4 } from 'uuid';
-import { getResearches, setResearches } from '../../services/StoreService';
+import useResearchCreation from '../../hooks/useResearchCreation';
 
 interface Props {
   open: boolean;
@@ -11,39 +9,13 @@ interface Props {
 }
 
 export default function NewResearchDialog({ open, onClose }: Props) {
-
-  const [researches, setResearchesState] = useState<Research[]>([]);
   const [name, setName] = useState('');
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadData = async () => {
-      const storedResearches = await getResearches();
-      setResearchesState(storedResearches || []);
-    };
-    loadData();
-  }, []);
-
-
-  useEffect(() => {
-    setResearches(researches);
-  }, [researches]);
-
-  const handleCreateResearch = async (name: string) => {
-    let id = uuidv4();
-    const newResearch: Research = {
-      id: id,
-      name,
-      path: `./researches/${id}`,
-      createdAt: new Date().toISOString(),
-    };
-    setResearchesState([...researches, newResearch]);
-    navigate(`/research/${newResearch.id}`);
-  };
-
-  const handleCreate = () => {
-    handleCreateResearch(name);
+  const { createResearch } = useResearchCreation();
+  const handleCreate = async () => {
+    const researchId = await createResearch(name, "");
     setName('');
+    navigate(`/research/${researchId}`);
   };
 
   return (

@@ -1,8 +1,9 @@
-import { Node, Edge, OnConnect, OnEdgesChange, OnNodesChange } from '@xyflow/react';
+import { Node, Edge, OnConnect, OnEdgesChange, OnNodesChange, NodeProps } from '@xyflow/react';
 
 export interface Research {
   id: string;
   name: string;
+  description: string
   path: string;
   createdAt: string;
 }
@@ -10,24 +11,15 @@ export interface Research {
 
 export interface ResearchData {
   research: {
-    nodes: MindMapNode[];
+    detail: Research
+    nodes: SynapNode[];
     edges: Edge[];
   }
 }
 
-export interface MindMapNode extends Node {
-  id: string;
-  data: {
-    label: string;
-    markdownContent?: string;
-    aiQuery?: string;
-    aiResponse?: string;
-    links?: string[];
-  };
-  position: {
-    x: number;
-    y: number;
-  };
+interface NodeQuestion {
+  question: string;
+  answer: string;
 }
 
 export type MindMapNodeEventHandlers = {
@@ -37,8 +29,15 @@ export type MindMapNodeEventHandlers = {
   onSelectNode?: (nodeId: string) => void;
   onDeleteNode?: (nodeId: string) => void;
 };
+export type SynapNodeData ={
+  label: string;
+  summary?: string;
+  question?: NodeQuestion[];
+  links?: string[];
+  style?: React.CSSProperties;
+}
 
-export type SynapNode = Node;
+export type SynapNode = Node<SynapNodeData, 'synapNode'>;
 
 export type AppState = {
   nodes: SynapNode[];
@@ -48,4 +47,5 @@ export type AppState = {
   onConnect: OnConnect;
   setNodes: (nodes: SynapNode[]) => void;
   setEdges: (edges: Edge[]) => void;
+  addNode: (node: SynapNode) => void;
 };

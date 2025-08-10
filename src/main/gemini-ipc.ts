@@ -14,7 +14,6 @@ ipcMain.handle('getGeminiIdeas', async (_event, topic: string, apiKey: string) =
       }
     });
     const response = result.text ?? '{}';
-    console.log('Gemini Ideas Response:', response);
     return JSON.parse(response);
   } catch (error) {
     console.error('Error calling Gemini API for ideas:', error);

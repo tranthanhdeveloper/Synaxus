@@ -1,27 +1,19 @@
-import { ipcMain } from 'electron';
-let mindMapStore: any;
-let Store: any;
+import { app, ipcMain } from 'electron';
+import fs from 'node:fs';
+import path from 'node:path';
+import { ResearchData } from 'renderer/types/types';
 
-async function initMindMapStore() {
-  if (!Store) {
-    Store = (await import('electron-store')).default;
-  }
-  if (!mindMapStore) {
-    mindMapStore = new Store({ name: 'mindmap' });
-  }
-}
-
-ipcMain.handle('getMindMapData', (_event, researchId: string) => {
-  return (async () => {
-    await initMindMapStore();
-    console.log('Fetching mind map data for research ID:', researchId);
-    return mindMapStore.get(researchId, null);
-  })();
+ipcMain.handle('getMindMapData', async (_event, researchPath: string) => {
+  let fileContent = fs.readFileSync(path.join(researchPath, 'researchdata.json'), 'utf-8');
+  return JSON.parse(fileContent) as ResearchData;
 });
 
-ipcMain.handle('setMindMapData', async (_event, researchId: string, data: any) => {
-  await initMindMapStore();
-  console.log('Setting mind map data for research ID:', researchId, 'Data:', data);
-  mindMapStore.set(researchId, data);
+ipcMain.handle('setMindMapData', async (_event, researchPath: string, data: ResearchData) => {
+  const storingPath = path.join(researchPath, 'researchdata.json');
+  fs.writeFile(storingPath, JSON.stringify(data), { flag: 'wx' }, (err) => {
+    if (err) {
+      console.error('Error saving mind map data:', err);
+    }
+  });
 });
 

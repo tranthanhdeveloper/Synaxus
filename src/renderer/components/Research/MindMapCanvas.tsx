@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react';
-import {ReactFlow, MiniMap, Controls, Background, BackgroundVariant, Panel } from '@xyflow/react';
+import { ReactFlow, MiniMap, Controls, Background, BackgroundVariant, Panel } from '@xyflow/react';
 import HomeIcon from '@mui/icons-material/Home';
-import { Button } from '@mui/material';
+import { Button, Popover } from '@mui/material';
+import Synap from './Synap/Synap';
+import AddNewSynap from './AddNewSynap/AddNewSynap';
 
 interface MindMapCanvasProps {
   nodes: any[];
@@ -11,11 +13,11 @@ interface MindMapCanvasProps {
   onConnect?: any;
   onNodeClick?: any;
   children?: React.ReactNode;
-  onAddNewNode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onAddNewNode: (label: string) => void;
 }
 
 export default function MindMapCanvas({ nodes, edges, onNodesChange, onEdgesChange, onConnect, onNodeClick, children, onAddNewNode }: MindMapCanvasProps) {
-
+  const synap = { default: Synap };
   const onHomePageClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     event.preventDefault();
@@ -23,6 +25,7 @@ export default function MindMapCanvas({ nodes, edges, onNodesChange, onEdgesChan
   }, []);
   return (
     <ReactFlow
+      nodeTypes={synap}
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
@@ -30,8 +33,7 @@ export default function MindMapCanvas({ nodes, edges, onNodesChange, onEdgesChan
       onConnect={onConnect}
       onNodeClick={onNodeClick}
       zoomOnScroll={true}
-      fitView
-
+      fitView={true}
     >
       <Panel position='top-left'  >
         <Button variant='contained' color='primary' aria-label='Home' onClick={onHomePageClick}>
@@ -39,7 +41,7 @@ export default function MindMapCanvas({ nodes, edges, onNodesChange, onEdgesChan
         </Button>
       </Panel>
       <Panel position='top-right'>
-        <Button variant="contained" color="secondary" aria-label='Add Node' size='small' onClick={onAddNewNode}>Add Node</Button>
+        <AddNewSynap onAddNewNode={onAddNewNode} />
       </Panel>
       <Controls position='bottom-left' />
       <MiniMap />
