@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom';
-import { Button, Container, Typography, List, ListItem, ListItemText, Card, CardContent, CardActions } from '@mui/material';
+import { Button, Container, Typography} from '@mui/material';
 import NewResearchDialog from '../NewResearch/NewResearchDialog';
 import { useState } from 'react';
-import ResearchList from '../ResearchList/ResearchList';
+import StudyList from '../ResearchList/StudyList';
 
 interface Props {
 }
@@ -28,9 +27,9 @@ export default function HomeScreen({ }: Props) {
           </Typography>
         </div>
         <Button variant="contained" color="primary" onClick={handleStartNewResearch} sx={{ mb: 4 }}>
-          Start New Research
+          New Study
         </Button>
-        <ResearchList/>
+        <StudyList/>
       </Container>
 
       <NewResearchDialog

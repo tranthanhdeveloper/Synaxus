@@ -8,7 +8,8 @@ import { getResearchById, getResearchMapData, setResearchMapData } from 'rendere
 import useAppStore from 'renderer/store/store';
 import { useSynapCreation } from 'renderer/hooks/useSynapCreation/useSynapCreation';
 import { Research } from 'renderer/types/types';
-import ResizableSidebar from './Panel/SynapInfo';
+import ResizablePanel from '../Shared/ResizablePanel/ResizablePanel';
+import SynapStudyPanel from './Panel/SynapInfo';
 
 const selector = (state: any) => ({
   nodes: state.nodes,
@@ -57,7 +58,7 @@ export default function ResearchScreen() {
       {loading && <Box sx={{ width: '100%' }} >
         <LinearProgress />
       </Box>}
-      <div style={{width:'100vw', height: '100vh', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap'}}>
+      <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'row', flexWrap: 'nowrap' }}>
         <MindMapCanvas
           nodes={nodes}
           edges={edges}
@@ -66,8 +67,10 @@ export default function ResearchScreen() {
           onConnect={onConnect}
           onAddNewNode={createSynapNode}
         />
-        <ResizableSidebar/>
-      
+        <ResizablePanel>
+          <SynapStudyPanel />
+        </ResizablePanel>
+
       </div>
     </>
   );

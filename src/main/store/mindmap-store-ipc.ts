@@ -1,7 +1,7 @@
 import { app, ipcMain } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
-import { ResearchData } from 'renderer/types/types';
+import { ResearchData } from 'types/types';
 
 ipcMain.handle('getMindMapData', async (_event, researchPath: string) => {
   let fileContent = fs.readFileSync(path.join(researchPath, 'researchdata.json'), 'utf-8');

@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import { Research } from '../../types/types';
 import { Button, Typography, List, ListItem, ListItemText, Card, CardContent, CardActions, Container } from '@mui/material';
 import { getResearches } from '../../services/StoreService';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function ResearchList() {
+export default function StudyList() {
     const [researches, setResearches] = useState<Research[]>([]);
 
 

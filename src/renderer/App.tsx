@@ -10,6 +10,7 @@ const darkTheme = createTheme({
   palette: {
     mode: 'dark',
   },
+  spacing: 1,
 });
 
 export default function App() {

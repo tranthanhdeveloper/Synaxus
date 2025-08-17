@@ -20,16 +20,16 @@ export default function NewResearchDialog({ open, onClose }: Props) {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Start New Research</DialogTitle>
+      <DialogTitle>Start New Study</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Please enter a name for your new research project.
+          Please enter a name for your new study journey.
         </DialogContentText>
         <TextField
           autoFocus
           margin="dense"
           id="name"
-          label="Research Name"
+          label="Study topic"
           type="text"
           fullWidth
           variant="standard"

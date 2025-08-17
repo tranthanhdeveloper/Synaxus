@@ -1,18 +1,18 @@
-import { Box, Input, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Popover from "@mui/material/Popover";
 import React from "react";
 
 export default function AddNewSynap({ onAddNewNode }: { onAddNewNode: (lable: string) => void }) {
     const [name, setName] = React.useState("");
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement>();
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
-        setAnchorEl(null);
+        setAnchorEl(undefined);
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -28,7 +28,7 @@ export default function AddNewSynap({ onAddNewNode }: { onAddNewNode: (lable: st
     return (
         <div>
             <Button aria-describedby={id} variant="contained" onClick={handleClick}>
-                Add New Synap
+                New Synap
             </Button>
             <Popover
                 id={id}
@@ -37,7 +37,7 @@ export default function AddNewSynap({ onAddNewNode }: { onAddNewNode: (lable: st
                 onClose={handleClose}
                 anchorOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'left',
+                    horizontal: 'right',
                 }}
             >
                 <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 2, width: 300, borderRadius: 1, boxShadow: 3 }}>
